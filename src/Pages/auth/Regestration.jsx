@@ -50,7 +50,7 @@ function Regestration() {
 
                   <Button variant="contained" style={{padding: "26px 122px", marginTop: "10px", backgroundColor: "#5F34F5", marginTop: "20px", fontSize: "15px", borderRadius: "86px" }}>Sign up</Button>
 
-                        <span style={{fontWeight: "700"}}>Already have an account ? <Link to="/login" style={{color: "#EA6C00", fontWeight: "700", textDecoration: "none"}} >Sign in</Link> </span>
+                        <span style={{fontWeight: "700"}}>Already have an account ? <Link to="/" style={{color: "#EA6C00", fontWeight: "700", textDecoration: "none"}} >Sign in</Link> </span>
 
             </div>
 
