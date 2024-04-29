@@ -1,0 +1,29 @@
+.google{
+  cursor: pointer;
+  height: 62px;
+  width: 220px;
+}
+
+.loginForm{
+  display: flex;
+  flex-direction: column;
+  row-gap: 50px;
+}
+
+.regesterForm{
+  display: flex;
+  flex-direction: column;
+  row-gap: 50px;
+}
+
+
+.Lbanner{
+  width: 100%;
+  height: 100vh;
+}
+
+
+.Rbanner{
+  width: 100%;
+  height: 100vh;
+}
