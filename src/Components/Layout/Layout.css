@@ -1,0 +1,44 @@
+.sidebarmain{
+  width: 200px;
+  height: 100vh;
+  padding: 32px ;
+}
+
+li{
+  list-style-type: none;
+}
+
+.sidebarUl{
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  align-items: center;
+}
+
+.sidebarUl li a{
+  color: white;
+  font-size: 50px;
+}
+
+.sidebar_inner{
+  width: 100%;
+  height: 100vh;
+  background: #5F35F5;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px 0;
+}
+
+.profileImg{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.logoutBtn {
+  padding: 15px 0;
+  color: aliceblue;
+  font-size: 50px;
+}
