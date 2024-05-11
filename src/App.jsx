@@ -11,6 +11,7 @@ import Error from "./Pages/Error/Error";
 import Rootlayout from "./Components/Layout/Rootlayout";
 import Home from "./Pages/Home/Home";
 import Regestration from "./Pages/auth/Regestration";
+
 function App() {
 
   const router = createBrowserRouter(

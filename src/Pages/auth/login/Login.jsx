@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import LoginValidation from '../../../Validation/LoginValidation';
-
+import Modal from '@mui/material/Modal';
 
 const LoginHeading = styled(Typography)({
   color:  "#03014C",
@@ -22,6 +22,18 @@ const LoginHeading = styled(Typography)({
   fontFamily: '"Open Sans", sans-serif"',
   lineHeight: "normal"
 })
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 function Login() {
 
@@ -42,6 +54,9 @@ function Login() {
     },
   });
 
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
  
@@ -97,7 +112,8 @@ function Login() {
 
                   <span style={{fontWeight: "700"}}>Already  have an account ?
                   <Link style={{textDecoration: "none", color: "#EA6C00"}} to="/regester">Sign up</Link>  
-
+                
+                  <p onClick={handleOpen} style={{marginTop: "20px", cursor: "pointer"}}>Forget Your password?</p>
                   </span>
 
             </div>
@@ -116,6 +132,26 @@ function Login() {
 
             </Grid> 
           </Grid>
+          <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <h1 style={{textAlign: "center", marginBottom: "15px"}}> Forget Your Password</h1>
+          <div style={{display: "flex", flexDirection: "column", gap: "21px"}}>
+                        <Input 
+                          type="email" 
+                          name= "forgetemail" 
+                          id="forgetemail" 
+                          variant="outlined" 
+                          placeholder="Forget E-mail" 
+                          styleing= "emailBox"/>
+                    <Button type='submit' variant="contained" style={{fontSize: "20px", fontWeight: "700", fontFamily: "poppins", padding: "10px 10px"}}>Forget  Password</Button>
+          </div>
+        </Box>
+      </Modal>
     </Box> 
      
     </div>
