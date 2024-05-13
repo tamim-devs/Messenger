@@ -12,6 +12,7 @@ import { Formik, useFormik } from 'formik';
 import Input from '../../Utilities/Input';
 import * as Yup from 'yup';
 import Modal from '@mui/material/Modal';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile  } from "firebase/auth";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -38,6 +39,8 @@ const LoginHeading = styled(Typography)({
 
 function Regestration() {
 
+  const auth = getAuth();
+
   const initialValues = {
     fullName: "",
     email: '',
@@ -52,9 +55,32 @@ function Regestration() {
     onSubmit: (values,actions) => {
       console.log(values);
       actions.resetForm();
-      // alert(JSON.stringify(values, null, 2));
-    },
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        sendEmailVerification(auth.currentUser)
+        .then(() => {
+          updateProfile(auth.currentUser, {
+            displayName: values.fullName,
+            // photoURL: ""
+          }).then(() => {
+           console.log(userCredential);
+          }).catch((error) => {
+              console.log("profile update er jamela asay");
+          });
+            console.log("mail sent hoice");
   });
+       
+     
+      })
+      .catch((error) => {
+        console.log(error);
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+  
+      });
+          // alert(JSON.stringify(values, null, 2));
+        },
+      });
 
   return (
     <div>
@@ -93,9 +119,9 @@ function Regestration() {
 
                       <div>
                         <Input placeholder="Password" type= "password" name= "password" 
-                            id="password"  variant="outlined" onChange={Formik.handleChange}  value={Formik.values.email} /> 
+                            id="password"  variant="outlined" onChange={Formik.handleChange}  value={Formik.values.password} /> 
 
-                        {Formik.touched.password && Formik.password.email ? (
+                        {Formik.touched.password && Formik.errors.password ? (
                           <p style={{color: "red", fontSize: "19px", fontWeight: "bold"}}>{Formik.errors.password}</p>
                            ) : null}
 
