@@ -61,11 +61,11 @@ function Login() {
   return (
  
  <div>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container>
-            <Grid item xs={6} style={{display: "flex", flexDirection: "column", gap: "4px",  alignItems: "center", justifyContent: "center" }}>
-            <div className='loginForm'>
-                 <LoginHeading variant="h5">
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container>
+      <Grid item xs={6} style={{display: "flex", flexDirection: "column", gap: "4px",  alignItems: "center", justifyContent: "center" }}>
+          <div className='loginForm'>
+              <LoginHeading variant="h5">
                     Login to your account!
                   </LoginHeading>
                   <Images source={googleImg} alt="google" styleIng="google" />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -13,6 +13,10 @@ import Input from '../../Utilities/Input';
 import * as Yup from 'yup';
 import Modal from '@mui/material/Modal';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile  } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { ToastContainer, toast } from 'react-toastify';
+import { Puff } from 'react-loader-spinner';
+import { useNavigate } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -34,12 +38,14 @@ const LoginHeading = styled(Typography)({
 
 
 
-  
-
-
 function Regestration() {
 
   const auth = getAuth();
+  const db = getDatabase();
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+
+  
 
   const initialValues = {
     fullName: "",
@@ -52,40 +58,76 @@ function Regestration() {
     initialValues: initialValues,
     validationSchema: RegestrationValidation,
   
-    onSubmit: (values,actions) => {
-      console.log(values);
-      actions.resetForm();
-      createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        sendEmailVerification(auth.currentUser)
-        .then(() => {
-          updateProfile(auth.currentUser, {
-            displayName: values.fullName,
-            // photoURL: ""
-          }).then(() => {
-           console.log(userCredential);
-          }).catch((error) => {
-              console.log("profile update er jamela asay");
-          });
-            console.log("mail sent hoice");
+   onSubmit: (values, actions)=>{
+    setLoading(true)
+    console.log(values);
+    actions.resetForm()
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+    .then((userCredential) => {
+      console.log(userCredential);
+      sendEmailVerification(auth.currentUser)
+      .then(() => {
+        console.log("mail sent hoisay");
+        updateProfile(auth.currentUser, {
+          displayName: userCredential.user.displayName,
+          photoURL: "https://example.com/jane-q-user/profile.jpg"
+        }).then(() => {
+         console.log("update profile");
+         toast("Registration Successful")
+         setTimeout(()=>{
+           navigate("/")
+         },2000)
+         setLoading(false )
+         set(ref(db, 'users/' + userCredential.user.uid), {
+          username: values.fullName,
+          email: values.email,
+          profile_picture : userCredential.user.photoURL,
+        });
+        }).catch((error) => {
+          setLoading(false )
+          console.log("update profile error");
+        });
+      });
+    })
+    .catch((error) => {
+      setLoading(false )
+      console.log(error);
+    });
+   }
+
   });
-       
-     
-      })
-      .catch((error) => {
-        console.log(error);
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
-  
-      });
-          // alert(JSON.stringify(values, null, 2));
-        },
-      });
 
   return (
-    <div>
+    
+      <>
 
-      <Box sx={{ flexGrow: 1 }}>
+      {loading &&
+        <div className='loading__wrapper'>
+        <Puff
+        visible={true}
+        height="120"
+        width="120"
+        color="#fff"
+        ariaLabel="puff-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+        />
+        </div>
+      }
+
+        <Box sx={{ flexGrow: 1 }}>
+      <ToastContainer
+      position="top-right"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="dark"
+    />
           <Grid container>
             <Grid item xs={6} style={{display: "flex", flexDirection: "column", gap: "4px",  alignItems: "center", justifyContent: "center" }}>
            
@@ -147,10 +189,11 @@ function Regestration() {
               <Images source={Rbanner}  styleIng="Rbanner" />
            </Grid>        
          </Grid>
-         </Box>
+           </Box>
+      </>
 
 
-    </div>
+    
   )
 }
 
