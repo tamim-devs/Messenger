@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
@@ -14,6 +14,11 @@ import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import LoginValidation from '../../../Validation/LoginValidation';
 import Modal from '@mui/material/Modal';
+import { getAuth, signInWithEmailAndPassword,  sendPasswordResetEmail, signInWithPopup } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { ThreeDots } from 'react-loader-spinner';
+import { GoogleAuthProvider } from "firebase/auth";
 
 const LoginHeading = styled(Typography)({
   color:  "#03014C",
@@ -35,40 +40,102 @@ const style = {
   p: 4,
 };
 
-function Login() {
-
+function Login() { 
+  const navigate = useNavigate()
+  const provider = new GoogleAuthProvider();
   const initialValues = {
     email: '',
     password: '',
   }
-
-
+  const [foregetemail, setForgetemail] = useState("")
+  const [loader, setLoader] = useState(false)
+  const auth = getAuth();
   const Formik = useFormik({
     initialValues: initialValues,
     validationSchema: LoginValidation,
 
     onSubmit: (values,actions) => {
-      console.log(values);
-      actions.resetForm();
-      // alert(JSON.stringify(values, null, 2));
+      // console.log(values);
+      setLoader(true)
+
+      signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if(user.emailVerified){
+         navigate("/home")
+         setLoader(false)
+        }else{
+          toast("Please Verify Your E-mal..")
+          setLoader(false)
+        }
+        console.log(user.emailVerified);
+        actions.resetForm();
+      })
+      .catch((error) => {
+        console.log(error);
+        toast("Invalid Credential...")
+        setTimeout(()=>{
+          setLoader(false)
+        },2000)
+      });
+      
     },
   });
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
+  let handleForgetPass = ()=>{
+    console.log(foregetemail);
+    sendPasswordResetEmail(auth, foregetemail )
+    .then(() => {
+      toast("forget email sent hoichay")
+    })
+    .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+      console.log(error);
+    
+    });
+  }
+    let handleGoogleLogin = ()=>{
+      signInWithPopup(auth, provider)
+  .then((result) => {
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const user = result.user;
 
+  }).catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    const email = error.customData.email;
+    const credential = GoogleAuthProvider.credentialFromError(error);
+  });
+    }
   return (
  
  <div>
     <Box sx={{ flexGrow: 1 }}>
+    <ToastContainer
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="dark"
+    />
       <Grid container>
       <Grid item xs={6} style={{display: "flex", flexDirection: "column", gap: "4px",  alignItems: "center", justifyContent: "center" }}>
           <div className='loginForm'>
               <LoginHeading variant="h5">
                     Login to your account!
                   </LoginHeading>
-                  <Images source={googleImg} alt="google" styleIng="google" />
+                  <Images onClick={handleGoogleLogin} source={googleImg} alt="google" styleIng="google" />
 
 
 
@@ -104,9 +171,26 @@ function Login() {
                                {Formik.touched.password && Formik.errors.password ? (
                           <p style={{color: "red", fontSize: "19px", fontWeight: "bold"}}>{Formik.errors.password}</p>
                            ) : null}
-                      </div>
-                    <Button type='submit' variant="contained" style={{padding: "26px 122px", marginTop: "20px", backgroundColor: "#5F34F5", marginTop: "20px" }}>Login to Continue</Button>
-                    </div>
+                          </div>
+                          <Button type='submit'  disabled={loader} variant="contained" style={{padding: "26px 122px", marginTop: "20px", backgroundColor: "#5F34F5", fontStyle: "bold", marginTop: "20px" }}>
+                            {loader ?
+                            <ThreeDots
+                            visible={true}
+                            height="40"
+                            width="80"
+                            color="#fff"
+                            radius="9"
+                            ariaLabel="three-dots-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                            />
+                            :
+                            "Login to Continue"
+                            }
+                            
+                            
+                          </Button>
+                         </div>
                   </form>
                   
 
@@ -147,8 +231,10 @@ function Login() {
                           id="forgetemail" 
                           variant="outlined" 
                           placeholder="Forget E-mail" 
-                          styleing= "emailBox"/>
-                    <Button type='submit' variant="contained" style={{fontSize: "20px", fontWeight: "700", fontFamily: "poppins", padding: "10px 10px"}}>Forget  Password</Button>
+                          styleing= "emailBox"
+                          onChange={(e)=>setForgetemail(e.target.value)}
+                          />
+                    <Button type='submit' onClick={handleForgetPass} variant="contained" style={{fontSize: "20px", fontWeight: "700", fontFamily: "poppins", padding: "10px 10px"}}>Forget  Password</Button>
           </div>
         </Box>
       </Modal>

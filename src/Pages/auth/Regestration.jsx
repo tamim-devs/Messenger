@@ -69,7 +69,7 @@ function Regestration() {
       .then(() => {
         console.log("mail sent hoisay");
         updateProfile(auth.currentUser, {
-          displayName: userCredential.user.displayName,
+          fullName: values.fullName,
           photoURL: "https://example.com/jane-q-user/profile.jpg"
         }).then(() => {
          console.log("update profile");
@@ -79,10 +79,15 @@ function Regestration() {
          },2000)
          setLoading(false )
          set(ref(db, 'users/' + userCredential.user.uid), {
-          username: values.fullName,
-          email: values.email,
-          profile_picture : userCredential.user.photoURL,
-        });
+           displayName: userCredential.user.displayName,
+           email: userCredential.user.email,
+           profile_picture : userCredential.user.photoURL,
+          }).then(()=>{
+            console.log("real data create");
+
+          });
+         
+          
         }).catch((error) => {
           setLoading(false )
           console.log("update profile error");
