@@ -14,11 +14,13 @@ import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import LoginValidation from '../../../Validation/LoginValidation';
 import Modal from '@mui/material/Modal';
-import { getAuth, signInWithEmailAndPassword,  sendPasswordResetEmail, signInWithPopup } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword,  sendPasswordResetEmail, signInWithPopup, } from 'firebase/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from 'react-loader-spinner';
-import { GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, signOut  } from "firebase/auth";
+import { logedinUser } from '../../../slices/authSlice';
+import { useSelector, useDispatch } from 'react-redux'
 
 const LoginHeading = styled(Typography)({
   color:  "#03014C",
@@ -43,6 +45,8 @@ const style = {
 function Login() { 
   const navigate = useNavigate()
   const provider = new GoogleAuthProvider();
+  const dispatch = useDispatch()
+
   const initialValues = {
     email: '',
     password: '',
@@ -62,6 +66,8 @@ function Login() {
       .then((userCredential) => {
         const user = userCredential.user;
         if(user.emailVerified){
+          localStorage.setItem("loggedinUser", JSON.stringify(user))
+          dispatch(logedinUser(user))
          navigate("/home")
          setLoader(false)
         }else{

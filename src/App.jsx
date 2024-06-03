@@ -22,7 +22,7 @@ function App() {
               <Route element={<Rootlayout/>}>
                 <Route path="/home" element={<Home/>}/>
             </Route>
-            
+      
                 <Route path="/" element={<Login/>}/>
                 <Route path="*" element={<Error/>}/>
                 <Route path="/regester" element={<Regestration/>}/>            

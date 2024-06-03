@@ -42,3 +42,16 @@ li{
   color: aliceblue;
   font-size: 50px;
 }
+
+
+li a.active .sidebarIcon:hover{
+color: black;  
+}
+
+
+li a.active:hover{
+  background: #fff;
+  padding-top: 3px;
+  padding-left: 41px;
+  padding-right: 41px;
+}

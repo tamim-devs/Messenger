@@ -69,7 +69,7 @@ function Regestration() {
       .then(() => {
         console.log("mail sent hoisay");
         updateProfile(auth.currentUser, {
-          fullName: values.fullName,
+          displayName: values.fullName,
           photoURL: "https://example.com/jane-q-user/profile.jpg"
         }).then(() => {
          console.log("update profile");
